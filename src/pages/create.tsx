@@ -146,7 +146,44 @@ export default function CreateAgent() {
           </div>
         </div>
         <div className="w-1/2 ml-32">
-          <div className="w-1/2 h-[500px] bg-red-500">asd</div>
+          <div className="flex flex-col gap-4 w-2/5 rpgui-container framed-golden-2">
+            <div className="flex flex-col gap-2">
+              <label htmlFor="description">Character File</label>
+              <textarea id="description" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">OpenAI API Key</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Twitter Username</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Twitter Password</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Twitter Email</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Telegram Bot Token</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Discord Application ID</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Discord API Token</label>
+              <input type="password" id="name" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name">Reddit API Token</label>
+              <input type="password" id="name" />
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
