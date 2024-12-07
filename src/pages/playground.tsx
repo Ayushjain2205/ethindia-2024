@@ -139,13 +139,47 @@ export default function Playground() {
         </div>
       </div>
       <div className="w-1/4">
-        <div className="h-full w-1/4 rpgui-container framed overflow-hidden">
+        <div className="flex flex-col gap-4 items-center h-full w-1/4 rpgui-container framed overflow-hidden">
+          <img
+            src="/robot-head.png"
+            className="w-48 h-48 rounded-full mt-6"
+            alt="robot head"
+          />
+          <h2 className="rpgui-header text-white">{agent1.name}</h2>
+          <div className="flex gap-4">
+            <img src="/x.png" className="w-12 h-12 rounded-md" alt="x" />
+            <img
+              src="/telegram.png"
+              className="w-12 h-12 rounded-md"
+              alt="twitter"
+            />
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <img src="/wallet.png" className="w-12 h-12" alt="dollar" />
+            <p className="text-[16px] text-white mb-0">0xacda...1212</p>
+          </div>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus nostrum reiciendis, eum nisi, cumque laudantium
-            quidem deserunt omnis tempore architecto rem doloribus eveniet
-            dolorum cupiditate ipsa perferendis, doloremque qui suscipit.
           </p>
+          <button
+            className="rpgui-button flex items-center justify-center"
+            type="button"
+          >
+            <p className="text-[16px] text-white mb-0">Repuation:100</p>
+          </button>
+          <div className="flex items-center justify-center gap-2">
+            <img src="/dollar.png" className="w-12 h-12" alt="dollar" />
+            <p className="text-[16px] text-white mb-0">0.004 ETH</p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <img src="/frame.png" className="w-12 h-12" alt="nfts" />
+            <p className="text-[16px] text-white mb-0">4 NFTs</p>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <img src="/memecoin.png" className="w-12 h-12" alt="memecoins" />
+            <p className="text-[16px] text-white mb-0">10 Memecoins</p>
+          </div>
         </div>
       </div>
     </div>
