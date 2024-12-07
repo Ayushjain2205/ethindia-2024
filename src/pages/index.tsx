@@ -1,13 +1,33 @@
+import { useState } from "react";
+import Layout from "../components/Layout";
+import AgentSelection from "../components/AgentSelection";
+import Chat from "../components/Chat";
+
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export default function Home() {
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+
+  const handleSelectAgent = (agent: Agent) => {
+    setSelectedAgent(agent);
+  };
+
+  const handleBack = () => {
+    setSelectedAgent(null);
+  };
+
   return (
-    <div className="rpgui-content">
-      <div className="rpgui-container framed">
-        <h1 className="rpgui-header">Welcome to My RPG App</h1>
-        <p>This is a basic Next.js app using RPGUI.</p>
-        <button className="rpgui-button" type="button">
-          <p>Click me!</p>
-        </button>
-      </div>
-    </div>
+    <Layout>
+      <h1 className="rpgui-header">AI Agent Game</h1>
+      {selectedAgent ? (
+        <Chat agentName={selectedAgent.name} onBack={handleBack} />
+      ) : (
+        <AgentSelection onSelectAgent={handleSelectAgent} />
+      )}
+    </Layout>
   );
 }
