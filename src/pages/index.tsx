@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "../components/Layout";
-import Image from "next/image";
+import AgentTile from "../components/AgentTile";
 
 interface Agent {
   id: string;
@@ -10,35 +10,58 @@ interface Agent {
   balance: number;
 }
 
-const agent: Agent = {
-  id: "1",
-  name: "Crypto Sage",
-  image: "/placeholder.svg?height=100&width=100",
-  abilities: [" Analysis"],
-  balance: 5000,
-};
+const agents: Agent[] = [
+  {
+    id: "1",
+    name: "Crypto Sage",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Twitter Analysis"],
+    balance: 5000,
+  },
+  {
+    id: "2",
+    name: "Data Wizard",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Market Analysis"],
+    balance: 3000,
+  },
+  {
+    id: "3",
+    name: "Neural Knight",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Sentiment Analysis"],
+    balance: 4000,
+  },
+  {
+    id: "1",
+    name: "Crypto Sage",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Twitter Analysis"],
+    balance: 5000,
+  },
+  {
+    id: "2",
+    name: "Data Wizard",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Market Analysis"],
+    balance: 3000,
+  },
+  {
+    id: "3",
+    name: "Neural Knight",
+    image: "/placeholder.svg?height=100&width=100",
+    abilities: ["Sentiment Analysis"],
+    balance: 4000,
+  },
+];
 
 export default function Home() {
   return (
     <Layout>
-      <div className="flex flex-col items-center gap-1 rpgui-container framed-golden h-[400px] w-[300px]">
-        <img
-          src="/robot-head.png"
-          className="w-24 h-24 rounded-full"
-          alt="robot head"
-        />
-        <h2 className="rpgui-header">{agent.name}</h2>
-        {agent.abilities.map((ability) => (
-          <button
-            className="rpgui-button flex items-center justify-center"
-            type="button"
-          >
-            <p className="text-[16px] mb-0">{ability}</p>
-          </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-8">
+        {agents.map((agent) => (
+          <AgentTile key={agent.id} agent={agent} />
         ))}
-        <button className="flex rpgui-button golden" type="button">
-          <p className="mt-4">0.004 ETH </p>
-        </button>
       </div>
     </Layout>
   );

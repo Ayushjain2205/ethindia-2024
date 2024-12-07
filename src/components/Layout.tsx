@@ -19,10 +19,10 @@ export default function Layout({ children }: LayoutProps) {
       </Head>
       <div className="rpgui-content">
         <div
-          className="rpgui-container framed h-screen w-screen"
+          className="rpgui-container framed h-screen w-screen overflow-y-auto"
           style={{ height: "100vh", width: "100vw" }}
         >
-          {/* Modified header section */}
+          {/* Header section */}
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
               <img
@@ -35,7 +35,7 @@ export default function Layout({ children }: LayoutProps) {
             <WalletDefault />
           </div>
 
-          {children}
+          <div className="py-8">{children}</div>
         </div>
       </div>
     </>
