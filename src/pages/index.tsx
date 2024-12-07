@@ -23,7 +23,9 @@ export default function Home() {
 
   return (
     <Layout>
-      <WalletDefault />
+      <div className="flex justify-end">
+        <WalletDefault />
+      </div>
       <h1 className="rpgui-header">AI Agent Game</h1>
       {selectedAgent ? (
         <Chat agentName={selectedAgent.name} onBack={handleBack} />
