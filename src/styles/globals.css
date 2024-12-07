@@ -19,6 +19,11 @@ body {
   width: 100%;
 }
 
+.title {
+  font-size: 22px !important;
+  margin-bottom: 0px !important;
+}
+
 @layer base {
   :root .default-light,
   .default-dark,
