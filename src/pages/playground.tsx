@@ -85,6 +85,16 @@ export default function Playground() {
               className="w-12 h-12 rounded-md"
               alt="twitter"
             />
+            <img
+              src="/discord.png"
+              className="w-12 h-12 rounded-md"
+              alt="discord"
+            />
+            <img
+              src="/reddit.png"
+              className="w-12 h-12 rounded-md"
+              alt="reddit"
+            />
           </div>
           <div className="flex items-center justify-center gap-2">
             <img src="/wallet.png" className="w-12 h-12" alt="dollar" />
