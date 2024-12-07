@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Agent {
   id: string;
@@ -42,13 +42,31 @@ const agent2: Agent = {
 export default function Playground() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const sendMessage = (sender: string) => {
-    if (inputMessage.trim()) {
-      setMessages([...messages, { sender, content: inputMessage }]);
-      setInputMessage("");
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  //   useEffect(() => {
+  //     const interval = setInterval(() => {
+  //       const sender = messages.length % 2 === 0 ? agent1.name : agent2.name;
+  //       setMessages((prev) => [
+  //         ...prev,
+  //         {
+  //           sender,
+  //           content:
+  //             "lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet ",
+  //         },
+  //       ]);
+  //     }, 2000);
+
+  //     return () => clearInterval(interval);
+  //   }, [messages]);
 
   return (
     <div className="flex h-screen w-full min-h-screen">
@@ -62,14 +80,31 @@ export default function Playground() {
           </p>
         </div>
       </div>
-      <div className="w-2/4 ">
-        <div className="h-full w-1/2 rpgui-container framed-golden">
-          <div className="rpgui-container framed-golden-2">
-            <p>Hello</p>
+      <div className="w-2/4">
+        <div className="h-full w-1/2 rpgui-container framed-golden overflow-y-auto">
+          <div className="h-full ">
+            <div className="flex flex-col gap-4 p-4">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    msg.sender === agent1.name ? "justify-start" : "justify-end"
+                  }`}
+                >
+                  <div
+                    className="bg-white p-4 rounded shadow-md"
+                    style={{ width: "75%" }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
         </div>
       </div>
-      <div className="w-1/4 ">
+      <div className="w-1/4">
         <div className="h-full w-1/4 rpgui-container framed overflow-hidden">
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
