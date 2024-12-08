@@ -19,7 +19,7 @@ interface Message {
 
 const agent1: Agent = {
   id: "1",
-  name: "Crypto Sage",
+  name: "Tate",
   image: "/robot-head.png",
   abilities: ["Twitter Analysis", "Market Prediction"],
   balance: 0.004,
@@ -30,7 +30,7 @@ const agent1: Agent = {
 
 const agent2: Agent = {
   id: "2",
-  name: "Data Miner",
+  name: "Eliza",
   image: "/robot-head.png",
   abilities: ["Pattern Recognition", "Data Extraction"],
   balance: 0.006,
@@ -51,14 +51,15 @@ const LoadingDots = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return <div className="font-bold text-lg">{dots}</div>;
+  return <div className="font-bold text-lg">thinking{dots}</div>;
 };
 
 export default function Playground() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [currentlyTyping, setCurrentlyTyping] = useState<string | null>(null);
+  const [isStarted, setIsStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,55 +67,70 @@ export default function Playground() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, currentlyTyping]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim()) return;
-
-    // Add user message
-    const userMessage: Message = {
-      sender: "User",
-      content: inputMessage,
-    };
-    setMessages((prev) => [...prev, userMessage]);
-    setInputMessage("");
-    setIsLoading(true);
+  const startConversation = async () => {
+    setMessages([]);
+    setIsStarted(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/chatbot", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({
+          text: "What is zero?",
+          turns: 4,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to get response from chatbot");
-      }
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
 
-      const data = await response.json();
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      // Add bot messages from responses
-      if (data.responses) {
-        data.responses.forEach((response: any) => {
-          const botMessage: Message = {
-            sender: response.type === "agent" ? agent1.name : agent2.name,
-            content: response.content,
-          };
-          setMessages((prev) => [...prev, botMessage]);
-        });
+        const chunk = decoder.decode(value);
+        const messages = chunk.split("\n\n");
+
+        for (const message of messages) {
+          if (message.trim()) {
+            try {
+              const data = JSON.parse(message);
+              if (data.error) {
+                console.error("Stream error:", data.error);
+                continue;
+              }
+
+              // Show typing indicator
+              setCurrentlyTyping(data.agent);
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+
+              // Add message
+              setCurrentlyTyping(null);
+              setMessages((prev) => [
+                ...prev,
+                {
+                  sender: data.agent,
+                  content: data.message,
+                },
+              ]);
+
+              // Wait for a moment before processing the next message
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            } catch (e) {
+              console.error("Error parsing message:", e);
+            }
+          }
+        }
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage: Message = {
-        sender: agent1.name,
-        content: "Sorry, I encountered an error. Please try again.",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false);
+      setIsStarted(false);
+      setCurrentlyTyping(null);
     }
   };
 
@@ -178,54 +194,71 @@ export default function Playground() {
         <div className="h-full w-1/2 rpgui-container framed-golden overflow-y-auto">
           <div className="h-full flex flex-col">
             <div className="flex-1 flex flex-col gap-4 p-4">
+              {!isStarted && !messages.length && (
+                <div className="flex h-full items-center justify-center">
+                  <img
+                    src="/play.png"
+                    onClick={startConversation}
+                    className="h-60 w-60 cursor-pointer"
+                    alt="Start conversation"
+                  />
+                </div>
+              )}
               {messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`flex ${
-                    msg.sender === agent1.name ? "justify-start" : "justify-end"
+                    msg.sender === "tate"
+                      ? "justify-start"
+                      : msg.sender === "eliza"
+                      ? "justify-end"
+                      : "justify-center"
                   }`}
                 >
                   <div
-                    className="bg-white p-4 rounded shadow-md"
-                    style={{ width: "75%" }}
+                    className={`p-4 rounded shadow-md ${
+                      msg.sender === "chatbot"
+                        ? "bg-blue-100 w-full mx-8"
+                        : "bg-white w-3/4"
+                    }`}
                   >
+                    <div className="font-bold mb-1">
+                      {msg.sender === "chatbot" ? "CDP Agent" : msg.sender}
+                    </div>
                     <div className="prose prose-sm max-w-none">
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                   </div>
                 </div>
               ))}
-              {isLoading && (
-                <div className="flex justify-start">
+              {currentlyTyping && (
+                <div
+                  className={`flex ${
+                    currentlyTyping === "tate"
+                      ? "justify-start"
+                      : currentlyTyping === "eliza"
+                      ? "justify-end"
+                      : "justify-center"
+                  }`}
+                >
                   <div
-                    className="bg-white p-4 rounded shadow-md"
-                    style={{ width: "75%" }}
+                    className={`p-4 rounded shadow-md ${
+                      currentlyTyping === "chatbot"
+                        ? "bg-blue-100 w-full mx-8"
+                        : "bg-white w-3/4"
+                    }`}
                   >
+                    <div className="font-bold mb-1">
+                      {currentlyTyping === "chatbot"
+                        ? "CDP Agent"
+                        : currentlyTyping}
+                    </div>
                     <LoadingDots />
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
-            <form onSubmit={handleSubmit} className="p-4 border-t">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  className="flex-1 p-2 border rounded"
-                  placeholder="Type your message..."
-                  disabled={isLoading}
-                />
-                <button
-                  type="submit"
-                  className="rpgui-button"
-                  disabled={isLoading}
-                >
-                  Send
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       </div>
@@ -236,7 +269,7 @@ export default function Playground() {
             className="w-48 h-48 rounded-full mt-6"
             alt="robot head"
           />
-          <h2 className="rpgui-header text-white">{agent1.name}</h2>
+          <h2 className="rpgui-header text-white">{agent2.name}</h2>
           <div className="flex gap-4">
             <img src="/x.png" className="w-12 h-12 rounded-md" alt="x" />
             <img
