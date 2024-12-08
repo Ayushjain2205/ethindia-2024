@@ -32,12 +32,12 @@ export default async function handler(
 
   try {
     const { text, turns = 4 } = req.body;
-    let currentMessage = text || "What can we do leveraging web3";
+    let currentMessage = text;
     const agents = ["tate", "eliza"];
 
+    // Agent conversation
     for (let i = 0; i < turns; i++) {
       const currentAgent = agents[i % agents.length];
-
       const response = await getChatbotResponse(currentMessage);
       currentMessage = response;
 
@@ -49,11 +49,18 @@ export default async function handler(
           totalTurns: turns,
         }) + "\n\n"
       );
-
-      if (res.flush) {
-        res.flush();
-      }
     }
+
+    // Final chatbot response
+    const chatbotResponse = await getChatbotResponse(currentMessage);
+    res.write(
+      JSON.stringify({
+        agent: "chatbot",
+        message: chatbotResponse,
+        turn: turns + 1,
+        totalTurns: turns + 1,
+      }) + "\n\n"
+    );
 
     res.end();
   } catch (error) {

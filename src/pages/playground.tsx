@@ -69,8 +69,10 @@ export default function Playground() {
     scrollToBottom();
   }, [messages, currentlyTyping]);
 
-  const startConversation = async () => {
-    setMessages([]);
+  const handleConversation = async () => {
+    if (!messages.length) {
+      setMessages([]);
+    }
     setIsStarted(true);
 
     try {
@@ -80,7 +82,9 @@ export default function Playground() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text: "What is zero?",
+          text: messages.length
+            ? messages[messages.length - 1].content
+            : "What is zero?",
           turns: 4,
         }),
       });
@@ -188,22 +192,25 @@ export default function Playground() {
             <img src="/memecoin.png" className="w-12 h-12" alt="memecoins" />
             <p className="text-[16px] text-white mb-0">10 Memecoins</p>
           </div>
+          {!isStarted && (
+            <div className="items-center justify-center">
+              <button
+                onClick={handleConversation}
+                className="rpgui-button"
+                type="button"
+              >
+                {messages.length
+                  ? "Continue Conversation"
+                  : "Start Conversation"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="w-2/4">
         <div className="h-full w-1/2 rpgui-container framed-golden overflow-y-auto">
           <div className="h-full flex flex-col">
             <div className="flex-1 flex flex-col gap-4 p-4">
-              {!isStarted && !messages.length && (
-                <div className="flex h-full items-center justify-center">
-                  <img
-                    src="/play.png"
-                    onClick={startConversation}
-                    className="h-60 w-60 cursor-pointer"
-                    alt="Start conversation"
-                  />
-                </div>
-              )}
               {messages.map((msg, index) => (
                 <div
                   key={index}
